@@ -1,7 +1,6 @@
 <template>
-  <div>
-    <div>yyf admin</div>
-    <router-view></router-view>
+  <div class="container">
+    <router-view />
   </div>
 </template>
 
@@ -9,4 +8,10 @@
 export default {};
 </script>
 
-<style></style>
+<style scoped>
+.container {
+  background-image: url(../assets/img/login-background.png);
+  width: 100%;
+  height: 100%;
+}
+</style>
