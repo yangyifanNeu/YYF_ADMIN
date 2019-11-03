@@ -12,6 +12,7 @@
     "ant-design-vue": "^1.4.4",
     "core-js": "^3.3.2",
     "moment": "^2.24.0",
+    "ngprogress": "^1.1.3",
     "vue": "^2.6.10",
     "vue-router": "^3.1.3",
     "vuex": "^3.0.1"
