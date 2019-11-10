@@ -49,6 +49,22 @@
 </template>
 
 <script>
+import BasicLayout from '../../layouts/BasicLayout';
+var makeMenu = function(menuItem) {
+  let viewPath = menuItem.component;
+  menuItem.name = menuItem.id;
+  if (viewPath == 'Basiclayout') {
+    menuItem.component = BasicLayout;
+  } else {
+    menuItem.component = () => import('@/views' + viewPath);
+  }
+  if (menuItem.children && menuItem.children.length > 0) {
+    for (var i = 0; i < menuItem.children.length; i++) {
+      let item = menuItem.children[i];
+      makeMenu(item);
+    }
+  }
+};
 export default {
   beforeCreate() {
     this.form = this.$form.createForm(this, {name: 'normal_login'});
@@ -56,9 +72,23 @@ export default {
   methods: {
     handleSubmit(e) {
       e.preventDefault();
+      var $this = this;
       this.form.validateFields((err, values) => {
         if (!err) {
           console.log('Received values of form: ', values);
+          this.$store
+            .dispatch('getMenu')
+            .then(function() {
+              $this.$store.dispatch('getMenu').then(() => {
+                let menuData = JSON.parse(JSON.stringify($this.$store.state.menuData));
+                for (var i = 0; i < menuData.length; i++) {
+                  let item = menuData[i];
+                  makeMenu(item);
+                }
+                $this.$router.addRoutes(menuData);
+              });
+            })
+            .then(() => this.$router.push({path: '/common/home', query: {plan: 'private'}}));
         }
       });
     },

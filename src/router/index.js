@@ -6,8 +6,12 @@ Vue.use(VueRouter);
 
 const routes = [
   {
+    path: '/',
+    redirect: '/user/login',
+  },
+  {
     path: '/user',
-    component: () => import(/* webpackChunkName: "layout" */ '../layouts/UserLayout.vue'),
+    component: () => import(/* webpackChunkName: "layout" */ '@/layouts/UserLayout.vue'),
     children: [
       {
         path: '/user',
@@ -16,29 +20,35 @@ const routes = [
       {
         path: '/user/login',
         name: 'userLogin',
-        component: () => import(/* webpackChunkName: "user" */ '../views/user/Login.vue'),
+        component: () => import(/* webpackChunkName: "user" */ '@/views/user/Login.vue'),
       },
       {
         path: '/user/registry',
         name: 'userRegistry',
-        component: () => import(/* webpackChunkName: "user" */ '../views/user/Registry.vue'),
+        component: () => import(/* webpackChunkName: "user" */ '@/views/user/Registry.vue'),
       },
     ],
   },
   {
-    path: '/console',
-    component: () => import(/* webpackChunkName: "layout" */ '../layouts/BasicLayout.vue'),
+    path: '/common',
+    component: () => import(/* webpackChunkName: "layout" */ '@/layouts/BasicLayout.vue'),
     children: [
       {
-        path: '/console/basicForm',
-        component: () => import(/* webpackChunkName: "layout" */ '../views/form/BasicForm.vue'),
+        path: '/common/home',
+        component: () => import(/* webpackChunkName: "layout" */ '@/views/Home.vue'),
       },
     ],
   },
-  {
-    path: '/',
-    redirect: '/console/basicForm',
-  },
+  // {
+  //   path: '/console',
+  //   component: () => import(/* webpackChunkName: "layout" */ '../layouts/BasicLayout.vue'),
+  //   children: [
+  //     {
+  //       path: '/console/basicForm',
+  //       component: () => import(/* webpackChunkName: "layout" */ '../views/form/BasicForm.vue'),
+  //     },
+  //   ],
+  // },
 ];
 
 const router = new VueRouter({

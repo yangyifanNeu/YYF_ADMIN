@@ -1,9 +1,15 @@
 <template>
-  <div>Form</div>
+  <div @click="handleClick">Form</div>
 </template>
 
 <script>
-export default {};
+export default {
+  methods: {
+    handleClick() {
+      this.$router.push({path: '/form/basicForm'});
+    },
+  },
+};
 </script>
 
 <style></style>

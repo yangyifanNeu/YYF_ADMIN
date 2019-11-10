@@ -1,35 +1,39 @@
 <template>
   <div>
-    <a-menu :theme="$route.query.theme || 'dark'" :default-selected-keys="['1']" mode="inline">
-      <a-menu-item key="1">
-        <a-icon type="pie-chart" />
-        <span>Option 1</span>
-      </a-menu-item>
-      <a-menu-item key="2">
-        <a-icon type="desktop" />
-        <span>Option 2</span>
-      </a-menu-item>
-      <a-sub-menu key="sub1">
-        <span slot="title"><a-icon type="user" /><span>User</span></span>
-        <a-menu-item key="3">Tom</a-menu-item>
-        <a-menu-item key="4">Bill</a-menu-item>
-        <a-menu-item key="5">Alex</a-menu-item>
-      </a-sub-menu>
-      <a-sub-menu key="sub2">
-        <span slot="title"><a-icon type="team" /><span>Team</span></span>
-        <a-menu-item key="6">Team 1</a-menu-item>
-        <a-menu-item key="8">Team 2</a-menu-item>
-      </a-sub-menu>
-      <a-menu-item key="9">
-        <a-icon type="file" />
-        <span>File</span>
-      </a-menu-item>
+    <a-menu mode="inline" :theme="$route.query.theme || 'dark'" @click="switchMenu">
+      <template v-for="item in $store.state.menuData">
+        <a-menu-item v-if="!item.children" :key="item.id">
+          <a-icon :type="item.icon || 'mail'" />
+          <span>{{ item.label }}</span>
+        </a-menu-item>
+        <sub-menu v-else :menu-info="item" :key="item.key" />
+      </template>
     </a-menu>
   </div>
 </template>
 
 <script>
-export default {};
+import subMenu from '../components/subMenu';
+
+export default {
+  components: {
+    'sub-menu': subMenu,
+  },
+  beforeMount() {
+    if (this.$store.state.menuData.length == 0) {
+      this.$store.dispatch('getMenu');
+    }
+  },
+  methods: {
+    switchMenu(item) {
+      if (item.key) {
+        debugger;
+        // this.$router.push({path: item.path});
+        this.$router.push({name: item.key, query: {...this.$router.query}});
+      }
+    },
+  },
+};
 </script>
 
 <style scoped></style>
