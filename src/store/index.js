@@ -46,6 +46,7 @@ export default new Vuex.Store({
   mutations: {
     refreshMenu: function(state, menuData) {
       state.menuData = menuData;
+      state.menuInit = true;
     },
   },
   actions: {

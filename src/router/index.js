@@ -1,6 +1,8 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
 import NProgress from 'nprogress';
+import Store from '../store/index';
+import BasicLayout from '../layouts/BasicLayout';
 import 'nprogress/nprogress.css';
 Vue.use(VueRouter);
 
@@ -51,6 +53,21 @@ const routes = [
   // },
 ];
 
+var makeMenu = function(menuItem) {
+  let viewPath = menuItem.component;
+  menuItem.name = menuItem.id;
+  if (viewPath == 'Basiclayout') {
+    menuItem.component = BasicLayout;
+  } else {
+    menuItem.component = () => import('@/views' + viewPath);
+  }
+  if (menuItem.children && menuItem.children.length > 0) {
+    for (var i = 0; i < menuItem.children.length; i++) {
+      let item = menuItem.children[i];
+      makeMenu(item);
+    }
+  }
+};
 const router = new VueRouter({
   mode: 'history',
   base: process.env.BASE_URL,
@@ -58,7 +75,20 @@ const router = new VueRouter({
 });
 router.beforeEach((to, from, next) => {
   NProgress.start();
-  next();
+  if (to.path != '/' && to.path.indexOf('/user') < 0 && !Store.state.menuInit) {
+    Store.dispatch('getMenu').then(() => {
+      let menuData = JSON.parse(JSON.stringify(Store.state.menuData));
+      for (var i = 0; i < menuData.length; i++) {
+        let item = menuData[i];
+        makeMenu(item);
+        debugger;
+      }
+      router.addRoutes(menuData);
+      next({...to, replace: true});
+    });
+  } else {
+    next();
+  }
 });
 router.afterEach(() => {
   NProgress.done();

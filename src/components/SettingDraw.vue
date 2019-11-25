@@ -1,6 +1,6 @@
 <template>
   <div>
-    <a-drawer title="Basic Drawer" placement="right" width="300px" :closable="false" :visible="visible">
+    <a-drawer title="主题配置" placement="right" width="300px" :closable="false" :visible="visible">
       <template v-slot:handle>
         <div class="handler" @click="visible = !visible">
           <a-icon :type="visible ? 'close' : 'setting'"></a-icon>
