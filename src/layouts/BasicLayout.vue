@@ -8,7 +8,12 @@
         :class="'ant-layout-sider-' + ($route.query.theme || 'dark')"
         v-if="$route.query.mode == 'inline' || !$route.query.mode"
       >
-        <div class="logo" />
+        <div class="logo">
+          <div v-if="!collapsed">YYF ADMIN</div>
+          <div v-else>
+            YYF
+          </div>
+        </div>
         <SiderMenu />
       </a-layout-sider>
       <a-layout>
@@ -63,7 +68,11 @@ export default {
 }
 .logo {
   height: 32px;
-  background: rgba(255, 255, 255, 0.2);
+  /* background: rgba(255, 255, 255, 0.2); */
   margin: 16px;
+  font-size: 25px;
+  color: #ffffff;
+  font-weight: bold;
+  text-align: center;
 }
 </style>

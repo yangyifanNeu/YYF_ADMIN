@@ -81,7 +81,6 @@ router.beforeEach((to, from, next) => {
       for (var i = 0; i < menuData.length; i++) {
         let item = menuData[i];
         makeMenu(item);
-        debugger;
       }
       router.addRoutes(menuData);
       next({...to, replace: true});
