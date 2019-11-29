@@ -30,8 +30,13 @@ export default {
   data() {
     return {
       formLayout: 'horizontal',
-      form: this.$form.createForm(this, {name: 'coordinated'}),
     };
+  },
+  beforeMount() {
+    this.form = this.$form.createForm(this, {name: 'coordinated'});
+  },
+  beforeDestroy() {
+    console.log('destroy BasicForm');
   },
   methods: {
     handleSubmit(e) {

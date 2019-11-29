@@ -26,7 +26,9 @@
           <Header />
         </a-layout-header>
         <a-layout-content style="margin: 0 16px">
-          <router-view />
+          <keep-alive>
+            <router-view />
+          </keep-alive>
         </a-layout-content>
         <a-layout-footer style="text-align: center">
           <Footer />
