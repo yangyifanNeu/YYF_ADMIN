@@ -27,8 +27,7 @@
         </a-layout-header>
         <a-layout-content style="margin: 0 16px">
           <a-breadcrumb style="margin: 16px 0px;">
-            <a-breadcrumb-item>Home</a-breadcrumb-item>
-            <a-breadcrumb-item><a href="">Application Center</a></a-breadcrumb-item>
+            <a-breadcrumb-item v-for="item in breadCumbData" :key="item.name">{{ item.label }}</a-breadcrumb-item>
           </a-breadcrumb>
           <div :style="{padding: '24px', background: '#fff', minHeight: '360px'}">
             <keep-alive>
@@ -50,6 +49,7 @@ import Header from './Header';
 import Footer from './Footer';
 import SiderMenu from './SiderMenu';
 import SettingDrawer from '../components/SettingDraw';
+import {mapGetters} from 'vuex';
 export default {
   components: {
     Header,
@@ -61,6 +61,9 @@ export default {
     return {
       collapsed: false,
     };
+  },
+  computed: {
+    ...mapGetters(['breadCumbData']),
   },
 };
 </script>

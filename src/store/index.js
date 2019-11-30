@@ -18,12 +18,16 @@ export default new Vuex.Store({
         icon: 'home',
       },
     ],
+    breadCumb: [],
     menuInit: false,
   },
   mutations: {
     refreshMenu: function(state, menuData) {
       state.menuData = menuData;
       state.menuInit = true;
+    },
+    refreshBreadcumb: (state, breadCumbData) => {
+      state.breadCumb = breadCumbData;
     },
   },
   actions: {
@@ -34,10 +38,27 @@ export default new Vuex.Store({
         });
       }
     },
+    refreshBreadcumb: function(context, routeItem) {
+      let matchedMenu = routeItem.matched;
+      let breadCumbData = [];
+      matchedMenu.forEach((item) => {
+        if (item.name) {
+          breadCumbData.push({
+            label: item.meta.label,
+            path: item.path,
+            name: item.name,
+          });
+        }
+      });
+      context.commit('refreshBreadcumb', breadCumbData);
+    },
   },
   getters: {
     wholeMenu: (state) => {
       return state.stableMenu.concat(state.menuData);
+    },
+    breadCumbData: (state) => {
+      return state.breadCumb;
     },
   },
   modules: {},

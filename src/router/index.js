@@ -38,6 +38,9 @@ const routes = [
       {
         name: 'home',
         path: '/common/home',
+        meta: {
+          label: '主页',
+        },
         component: () => import(/* webpackChunkName: "layout" */ '@/views/Home.vue'),
       },
     ],
@@ -62,6 +65,7 @@ var makeMenu = function(menuItem) {
   } else {
     menuItem.component = () => import('@/views' + viewPath);
   }
+  menuItem.meta = {label: menuItem.label};
   if (menuItem.children && menuItem.children.length > 0) {
     for (var i = 0; i < menuItem.children.length; i++) {
       let item = menuItem.children[i];
@@ -90,7 +94,8 @@ router.beforeEach((to, from, next) => {
     next();
   }
 });
-router.afterEach(() => {
+router.afterEach((to) => {
+  Store.dispatch('refreshBreadcumb', to);
   NProgress.done();
 });
 
