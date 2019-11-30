@@ -11,34 +11,11 @@ export default new Vuex.Store({
     menuData: [],
     stableMenu: [
       {
-        path: '/user',
-        component: '/layouts/UserLayout.vue',
-        children: [
-          {
-            path: '/user',
-            redirect: '/user/login',
-          },
-          {
-            path: '/user/login',
-            name: 'userLogin',
-            component: '/views/user/Login.vue',
-          },
-          {
-            path: '/user/registry',
-            name: 'userRegistry',
-            component: '/views/user/Registry.vue',
-          },
-        ],
-      },
-      {
-        path: '/common',
-        component: 'BasicLayout',
-        children: [
-          {
-            path: '/common/home',
-            component: '/views/Home.vue',
-          },
-        ],
+        path: '/common/home',
+        component: '/Home.vue',
+        label: '主页',
+        id: 'home',
+        icon: 'home',
       },
     ],
     menuInit: false,
@@ -56,6 +33,12 @@ export default new Vuex.Store({
           context.commit('refreshMenu', res.data);
         });
       }
+    },
+  },
+  getters: {
+    wholeMenu: (state) => {
+      debugger;
+      return state.stableMenu.concat(state.menuData);
     },
   },
   modules: {},

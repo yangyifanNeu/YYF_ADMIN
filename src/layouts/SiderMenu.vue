@@ -7,7 +7,7 @@
       :default-selected-keys="defaultSelectedKeys"
       :default-open-keys="defaultOpenKeys"
     >
-      <template v-for="item in $store.state.menuData">
+      <template v-for="item in wholeMenu">
         <a-menu-item v-if="!item.children" :key="item.id">
           <a-icon :type="item.icon || 'mail'" />
           <span>{{ item.label }}</span>
@@ -20,7 +20,7 @@
 
 <script>
 import subMenu from '../components/subMenu';
-
+import {mapGetters} from 'vuex';
 export default {
   components: {
     'sub-menu': subMenu,
@@ -31,11 +31,15 @@ export default {
       defaultOpenKeys: [],
     };
   },
-  beforeMount() {},
-  mounted() {
-    this.defaultSelectedKeys.push(this.$route.name);
-    this.$nextTick(() => this.$forceUpdate());
+  created() {
+    let menuName = this.$route.name;
+    this.defaultSelectedKeys = [menuName];
+  },
+  beforeMount() {
     this.refreshOpenMenus();
+  },
+  mounted() {
+    this.$nextTick(() => this.$forceUpdate());
   },
   methods: {
     switchMenu(item) {
@@ -44,13 +48,18 @@ export default {
       }
     },
     refreshOpenMenus() {
+      var $this = this;
+      $this.defaultOpenKeys = [];
       let matchedRouters = this.$route.matched;
       matchedRouters.forEach((item) => {
-        if (item.parent) {
-          this.defaultOpenKeys.push(item.parent.name);
+        if (item.parent && item.parent.name) {
+          $this.defaultOpenKeys.push(item.parent.name);
         }
       });
     },
+  },
+  computed: {
+    ...mapGetters(['wholeMenu']),
   },
 };
 </script>

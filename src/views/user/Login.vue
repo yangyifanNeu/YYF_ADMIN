@@ -64,7 +64,7 @@ export default {
       });
     },
     getMenu() {
-      this.$router.push({path: '/common/home'});
+      this.$router.push({path: '/form/basicForm'});
     },
   },
 };

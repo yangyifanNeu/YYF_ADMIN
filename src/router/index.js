@@ -36,6 +36,7 @@ const routes = [
     component: () => import(/* webpackChunkName: "layout" */ '@/layouts/BasicLayout.vue'),
     children: [
       {
+        name: 'home',
         path: '/common/home',
         component: () => import(/* webpackChunkName: "layout" */ '@/views/Home.vue'),
       },
