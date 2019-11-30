@@ -37,7 +37,6 @@ export default new Vuex.Store({
   },
   getters: {
     wholeMenu: (state) => {
-      debugger;
       return state.stableMenu.concat(state.menuData);
     },
   },

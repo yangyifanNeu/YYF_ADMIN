@@ -26,9 +26,15 @@
           <Header />
         </a-layout-header>
         <a-layout-content style="margin: 0 16px">
-          <keep-alive>
-            <router-view />
-          </keep-alive>
+          <a-breadcrumb style="margin: 16px 0px;">
+            <a-breadcrumb-item>Home</a-breadcrumb-item>
+            <a-breadcrumb-item><a href="">Application Center</a></a-breadcrumb-item>
+          </a-breadcrumb>
+          <div :style="{padding: '24px', background: '#fff', minHeight: '360px'}">
+            <keep-alive>
+              <router-view />
+            </keep-alive>
+          </div>
         </a-layout-content>
         <a-layout-footer style="text-align: center">
           <Footer />
