@@ -56,15 +56,15 @@ export default {
     this.form = this.$form.createForm(this, {name: 'userForm'});
   },
   beforeDestroy() {
-    console.log('destroy BasicForm');
+    window.console.log('destroy BasicForm');
   },
   methods: {
     handleSubmit(e) {
       e.preventDefault();
-      console.log('提交表单');
+      window.console.log('提交表单');
     },
     handleSelectChange(value) {
-      console.log(value);
+      window.console.log(value);
     },
     ...validatorFunc,
   },
