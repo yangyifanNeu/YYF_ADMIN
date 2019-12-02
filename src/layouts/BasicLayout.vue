@@ -1,6 +1,15 @@
 <template>
   <div>
-    <a-layout id="components-layout-demo-side" style="min-height: 100vh">
+    <a-layout
+      id="components-layout-demo-side"
+      style="min-height: 100vh"
+      :class="{
+        'siderbar-layout': $route.query.mode == 'inline' || !$route.query.mode,
+        'horizontal-layout': $route.query.mode == 'horizontal',
+        'light-layout': $route.query.theme == 'light',
+        'dark-layout': $route.query.theme !== 'light',
+      }"
+    >
       <a-layout-sider
         collapsible
         v-model="collapsed"
@@ -22,8 +31,12 @@
             @click="collapsed = !collapsed"
             class="trigger"
             :type="collapsed ? 'menu-unfold' : 'menu-fold'"
+            v-if="$route.query.mode == 'inline' || !$route.query.mode"
           ></a-icon>
-          <Header />
+          <div class="horizontal-logo" v-if="$route.query.mode == 'horizontal'">
+            <div>YYF</div>
+          </div>
+          <Header v-if="$route.query.mode == 'horizontal'" />
         </a-layout-header>
         <a-layout-content style="margin: 0 16px">
           <a-breadcrumb style="margin: 16px 0px;">
@@ -85,5 +98,28 @@ export default {
   color: #ffffff;
   font-weight: bold;
   text-align: center;
+}
+.horizontal-logo {
+  width: 120px;
+  height: 31px;
+  margin: 16px 24px 16px 0;
+  float: left;
+  text-align: center;
+  line-height: 31px;
+  font-size: 25px;
+  color: #001529;
+  font-weight: bold;
+}
+.light-layout .logo {
+  color: #001529;
+}
+.dark-layout .logo {
+  color: #ffffff;
+}
+.light-layout .horizontal-logo {
+  color: #001529;
+}
+.dark-layout .horizontal-logo {
+  color: #ffffff;
 }
 </style>

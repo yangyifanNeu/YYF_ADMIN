@@ -95,6 +95,7 @@ router.beforeEach((to, from, next) => {
   }
 });
 router.afterEach((to) => {
+  //更新面包屑
   Store.dispatch('refreshBreadcumb', to);
   NProgress.done();
 });

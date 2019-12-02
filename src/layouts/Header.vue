@@ -1,9 +1,14 @@
 <template>
-  <span>header</span>
+  <header-menu />
 </template>
 
 <script>
-export default {};
+import HeaderMenu from './HeaderMenu.vue';
+export default {
+  components: {
+    HeaderMenu,
+  },
+};
 </script>
 
 <style></style>
