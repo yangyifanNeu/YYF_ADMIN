@@ -11,6 +11,7 @@ export default new Vuex.Store({
     menuData: [],
     stableMenu: [
       {
+        //固定菜单主页
         path: '/common/home',
         component: '/Home.vue',
         label: '主页',

@@ -5,7 +5,7 @@ import Store from '../store/index';
 import BasicLayout from '../layouts/BasicLayout';
 import 'nprogress/nprogress.css';
 Vue.use(VueRouter);
-
+//定义登录页和主页路由
 const routes = [
   {
     path: '/',
