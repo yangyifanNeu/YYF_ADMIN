@@ -2,7 +2,7 @@
   <div>
     <a-menu
       mode="horizontal"
-      :theme="$route.query.theme || 'light'"
+      :theme="$route.query.theme || 'dark'"
       @click="switchMenu"
       :default-selected-keys="defaultSelectedKeys"
       :style="{lineHeight: '64px'}"
@@ -20,7 +20,8 @@
 
 <script>
 import subMenu from '../components/subMenu';
-import {mapGetters} from 'vuex';
+import {createNamespacedHelpers} from 'vuex';
+const {mapGetters} = createNamespacedHelpers('menu');
 export default {
   components: {
     'sub-menu': subMenu,
