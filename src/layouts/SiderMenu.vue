@@ -20,7 +20,8 @@
 
 <script>
 import subMenu from '../components/subMenu';
-import {mapGetters} from 'vuex';
+import {createNamespacedHelpers} from 'vuex';
+const {mapGetters} = createNamespacedHelpers('menu');
 export default {
   components: {
     'sub-menu': subMenu,

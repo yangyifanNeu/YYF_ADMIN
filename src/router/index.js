@@ -80,9 +80,10 @@ const router = new VueRouter({
 });
 router.beforeEach((to, from, next) => {
   NProgress.start();
-  if (to.path != '/' && to.path.indexOf('/user') < 0 && !Store.state.menuInit) {
-    Store.dispatch('getMenu').then(() => {
-      let menuData = JSON.parse(JSON.stringify(Store.state.menuData));
+  // let storeObj = Store;
+  if (to.path != '/' && to.path.indexOf('/user') < 0 && !Store.state.menu.menuInit) {
+    Store.dispatch('menu/getMenu').then(() => {
+      let menuData = JSON.parse(JSON.stringify(Store.state.menu.menuData));
       for (var i = 0; i < menuData.length; i++) {
         let item = menuData[i];
         makeMenu(item);
@@ -96,7 +97,7 @@ router.beforeEach((to, from, next) => {
 });
 router.afterEach((to) => {
   //更新面包屑
-  Store.dispatch('refreshBreadcumb', to);
+  Store.dispatch('menu/refreshBreadcumb', to);
   NProgress.done();
 });
 

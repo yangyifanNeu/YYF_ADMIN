@@ -62,7 +62,8 @@ import Header from './Header';
 import Footer from './Footer';
 import SiderMenu from './SiderMenu';
 import SettingDrawer from '../components/SettingDraw';
-import {mapGetters} from 'vuex';
+import {createNamespacedHelpers} from 'vuex';
+const {mapGetters} = createNamespacedHelpers('menu');
 export default {
   components: {
     Header,
