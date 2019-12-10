@@ -73,19 +73,19 @@ export default {
     this.form = this.$form.createForm(this, {name: 'userForm'});
   },
   beforeDestroy() {
-    console.log('destroy BasicForm');
+    window.console.log('destroy BasicForm');
   },
   methods: {
     handleSubmit(e) {
       e.preventDefault();
       this.form.validateFields((err, values) => {
         if (!err) {
-          console.log('Received values of form: ', values);
+          window.console.log('Received values of form: ', values);
         }
       });
     },
     handleSelectChange(value) {
-      console.log(value);
+      window.console.log(value);
     },
     ...validatorFunc,
   },
