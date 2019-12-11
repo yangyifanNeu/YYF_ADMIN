@@ -125,11 +125,37 @@
           </el-col>
         </el-row>
       </el-card>
-      <el-dialog title="饼状图" :visible.sync="dialogVisible" width="60%" :before-close="handleCloseDialog">
+      <el-dialog title="饼状图" :visible.sync="peiDialogVisible" width="60%" :before-close="handleCloseDialog">
         <pieChartComponent ref="pieChart" />
         <span slot="footer" class="dialog-footer">
-          <el-button @click="dialogVisible = false">取 消</el-button>
-          <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+          <el-button @click="peiDialogVisible = false">取 消</el-button>
+          <el-button type="primary" @click="peiDialogVisible = false">确 定</el-button>
+        </span>
+        <span slot="title" class="dialog-header">
+          <h1 style="width: auto;display: inline-block;">饼状图</h1>
+          <el-button @click="downloadGridAndChart" type="primary" style="float: right;margin-right: 46px" size="small"
+            >下载</el-button
+          >
+        </span>
+      </el-dialog>
+      <el-dialog title="线状图" :visible.sync="lineDialogVisible" width="60%" :before-close="handleCloseDialog">
+        <lineChartComponent ref="lineChart" />
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="lineDialogVisible = false">取 消</el-button>
+          <el-button type="primary" @click="lineDialogVisible = false">确 定</el-button>
+        </span>
+        <span slot="title" class="dialog-header">
+          <h1 style="width: auto;display: inline-block;">饼状图</h1>
+          <el-button @click="downloadGridAndChart" type="primary" style="float: right;margin-right: 46px" size="small"
+            >下载</el-button
+          >
+        </span>
+      </el-dialog>
+      <el-dialog title="柱状图" :visible.sync="barDialogVisible" width="60%" :before-close="handleCloseDialog">
+        <pieChartComponent ref="pieChart" />
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="barDialogVisible = false">取 消</el-button>
+          <el-button type="primary" @click="barDialogVisible = false">确 定</el-button>
         </span>
         <span slot="title" class="dialog-header">
           <h1 style="width: auto;display: inline-block;">饼状图</h1>
@@ -146,6 +172,7 @@
 import axios from 'axios';
 import {createNamespacedHelpers} from 'vuex';
 import pieChartComponent from './gridChart/pieChart';
+import lineChartComponent from './gridChart/lineChart';
 const API_PREFIX_URL = 'http://10.4.50.59:8999';
 const GRID_DATA_URL = '/report/list';
 const pageSize = 10;
@@ -153,13 +180,16 @@ const {mapGetters} = createNamespacedHelpers('bmw/unReport');
 export default {
   components: {
     pieChartComponent,
+    lineChartComponent,
   },
   data: () => {
     return {
       tableData: [],
       tableStructure: [],
       currentPage: 1,
-      dialogVisible: false,
+      peiDialogVisible: false,
+      lineDialogVisible: false,
+      barDialogVisible: false,
       form: {
         name: '',
         region: '',
@@ -234,9 +264,11 @@ export default {
       window.console.log(event);
     },
     pieChart() {
-      this.dialogVisible = true;
+      this.peiDialogVisible = true;
     },
-    lineChart() {},
+    lineChart() {
+      this.lineDialogVisible = true;
+    },
     barChart() {},
     upload() {},
     handleSizeChange() {},
@@ -266,7 +298,9 @@ export default {
       window.console.log(...arguments);
     },
     handleCloseDialog() {
-      this.dialogVisible = false;
+      this.peiDialogVisible = false;
+      this.lineDialogVisible = false;
+      this.barDialogVisible = false;
     },
     downloadGridAndChart() {
       this.$refs.pieChart.downLoad();
