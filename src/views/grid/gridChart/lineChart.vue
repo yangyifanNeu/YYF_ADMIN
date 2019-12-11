@@ -13,9 +13,9 @@
       </el-col>
     </el-row>
     <el-row>
-      <el-col :span="12">
+      <el-col :span="24">
         <el-table :data="gridData">
-          <el-table-column :label="columnOneName" :prop="columnOne" min-width="20%"> </el-table-column>
+          <el-table-column :label="columnOneName" :prop="columnOneStatic" min-width="20%"> </el-table-column>
           <el-table-column :label="columnTwoName">
             <template v-for="item in columnTwoStoreArray">
               <el-table-column :label="item.name" :min-width="columnWidth" :key="item.value" :prop="item.value">
@@ -24,7 +24,9 @@
           </el-table-column>
         </el-table>
       </el-col>
-      <el-col :span="12">
+    </el-row>
+    <el-row>
+      <el-col :span="24">
         <v-chart :options="options" ref="chart" style="width:100%" />
       </el-col>
     </el-row>
@@ -60,6 +62,7 @@ export default {
   data: () => {
     return {
       columnOne: 'REGION',
+      columnOneStatic: 'REGION',
       columnTwo: 'BRAND',
       columnOneName: '区域',
       columnTwoName: '品牌',
@@ -149,8 +152,15 @@ export default {
     selectChange() {
       if (this.columnOne !== this.columnTwo) {
         this.getdataByCondition();
+        this.columnOneStatic = this.columnOne;
         this.columnOneName = this.getStoreName(this.columnOne);
         this.columnTwoName = this.getStoreName(this.columnTwo);
+      } else {
+        this.$notify({
+          title: '警告',
+          message: '下拉列表中应该选择不同的值',
+          type: 'warning',
+        });
       }
     },
     getStoreName(value) {
@@ -176,7 +186,6 @@ export default {
         }
       }
       for (const key in this.mapGridData) {
-        debugger;
         if (this.mapGridData.hasOwnProperty(key)) {
           let mapDataItem = this.mapGridData[key];
           let seriesItem = {
@@ -194,6 +203,7 @@ export default {
       this.options.legend = {data: legend};
       this.options.xAxis[0].data = xAxisData;
       this.options.series = seriesData;
+      this.options = JSON.parse(JSON.stringify(this.options));
     },
   },
 };
