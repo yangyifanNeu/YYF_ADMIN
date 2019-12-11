@@ -43,9 +43,7 @@
             <a-breadcrumb-item v-for="item in breadCumbData" :key="item.name">{{ item.label }}</a-breadcrumb-item>
           </a-breadcrumb>
           <div :style="{padding: '24px', background: '#fff', minHeight: '360px'}">
-            <keep-alive>
-              <router-view />
-            </keep-alive>
+            <router-view />
           </div>
         </a-layout-content>
         <a-layout-footer style="text-align: center">

@@ -121,7 +121,6 @@ export default {
   },
   methods: {
     uploadImg() {
-      console.log(this.$refs.chart.getDataURL());
       axios.post(API_PREFIX_URL + '/downloadImg', {img: this.$refs.chart.getDataURL()});
     },
   },
