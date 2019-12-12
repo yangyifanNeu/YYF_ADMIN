@@ -139,26 +139,26 @@
         </span>
       </el-dialog>
       <el-dialog title="线状图" :visible.sync="lineDialogVisible" width="60%" :before-close="handleCloseDialog">
-        <lineChartComponent ref="lineChart" />
+        <lineOrBarChartComponent ref="lineChart" :chart-type="'line'" />
         <span slot="footer" class="dialog-footer">
           <el-button @click="lineDialogVisible = false">取 消</el-button>
           <el-button type="primary" @click="lineDialogVisible = false">确 定</el-button>
         </span>
         <span slot="title" class="dialog-header">
-          <h1 style="width: auto;display: inline-block;">饼状图</h1>
+          <h1 style="width: auto;display: inline-block;">线状图</h1>
           <el-button @click="downloadGridAndChart" type="primary" style="float: right;margin-right: 46px" size="small"
             >下载</el-button
           >
         </span>
       </el-dialog>
       <el-dialog title="柱状图" :visible.sync="barDialogVisible" width="60%" :before-close="handleCloseDialog">
-        <pieChartComponent ref="pieChart" />
+        <lineOrBarChartComponent ref="barChart" :chart-type="'bar'" />
         <span slot="footer" class="dialog-footer">
           <el-button @click="barDialogVisible = false">取 消</el-button>
           <el-button type="primary" @click="barDialogVisible = false">确 定</el-button>
         </span>
         <span slot="title" class="dialog-header">
-          <h1 style="width: auto;display: inline-block;">饼状图</h1>
+          <h1 style="width: auto;display: inline-block;">柱状图</h1>
           <el-button @click="downloadGridAndChart" type="primary" style="float: right;margin-right: 46px" size="small"
             >下载</el-button
           >
@@ -172,7 +172,7 @@
 import axios from 'axios';
 import {createNamespacedHelpers} from 'vuex';
 import pieChartComponent from './gridChart/pieChart';
-import lineChartComponent from './gridChart/lineChart';
+import lineOrBarChartComponent from './gridChart/lineOrBarChart';
 const API_PREFIX_URL = 'http://10.4.50.59:8999';
 const GRID_DATA_URL = '/report/list';
 const pageSize = 10;
@@ -180,7 +180,7 @@ const {mapGetters} = createNamespacedHelpers('bmw/unReport');
 export default {
   components: {
     pieChartComponent,
-    lineChartComponent,
+    lineOrBarChartComponent,
   },
   data: () => {
     return {
@@ -269,7 +269,9 @@ export default {
     lineChart() {
       this.lineDialogVisible = true;
     },
-    barChart() {},
+    barChart() {
+      this.barDialogVisible = true;
+    },
     upload() {},
     handleSizeChange() {},
     handleCurrentChange(pageIndex) {
@@ -303,7 +305,18 @@ export default {
       this.barDialogVisible = false;
     },
     downloadGridAndChart() {
-      this.$refs.pieChart.downLoad();
+      if (this.peiDialogVisible) {
+        this.$refs.pieChart.downLoad();
+        return;
+      }
+      if (this.lineDialogVisible) {
+        this.$refs.lineChart.downLoad();
+        return;
+      }
+      if (this.barDialogVisible) {
+        this.$refs.barChart.downLoad();
+        return;
+      }
     },
   },
 };

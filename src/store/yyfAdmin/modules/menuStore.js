@@ -1,5 +1,6 @@
 import axios from 'axios';
-const API_PREFIX_URL = 'http://127.0.0.1:3000';
+// const API_PREFIX_URL = 'http://127.0.0.1:3000';
+const API_PREFIX_URL = 'http://10.4.50.52:3000';
 const MENU_URL = '/getMenuData';
 export default {
   namespaced: true,

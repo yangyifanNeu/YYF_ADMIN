@@ -5,4 +5,14 @@ export default {
     const resetUrl = API_PREFIX_URL + option.url;
     return axios.get(resetUrl);
   },
+  post: (option) => {
+    const resetUrl = API_PREFIX_URL + option.url;
+    const data = option.data;
+    return axios.post(resetUrl, data);
+  },
+  downLoad: (option) => {
+    const resetUrl = API_PREFIX_URL + option.url;
+    const data = option.data;
+    return axios.post(resetUrl, data, {responseType: 'blob'});
+  },
 };

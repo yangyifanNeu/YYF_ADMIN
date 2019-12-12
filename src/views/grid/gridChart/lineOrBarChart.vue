@@ -14,7 +14,7 @@
     </el-row>
     <el-row>
       <el-col :span="24">
-        <el-table :data="gridData">
+        <el-table :data="gridData" ref="grid">
           <el-table-column :label="columnOneName" :prop="columnOneStatic" min-width="20%"> </el-table-column>
           <el-table-column :label="columnTwoName">
             <template v-for="item in columnTwoStoreArray">
@@ -36,6 +36,8 @@
 <script>
 import restUtil from '../../../util/restUtil.js';
 const restUrl = '/report/barAndLine';
+const downLoadUrl = '/report/download';
+// const downLoadUrl = '/report/download/get';
 const mapToArray = function(object) {
   var result = [];
   for (const key in object) {
@@ -59,6 +61,14 @@ const getColumnTwoStoreFromArray = function(array) {
   return {columnTwoStoreArray: mapToArray(result), columnTwoStoreMap: result};
 };
 export default {
+  props: {
+    chartType: {
+      type: String,
+      default: function() {
+        return 'line';
+      },
+    },
+  },
   data: () => {
     return {
       columnOne: 'REGION',
@@ -173,6 +183,7 @@ export default {
       }
     },
     buildChartOptions() {
+      const chartType = this.chartType;
       let legend = [];
       let xAxisData = [];
       let seriesData = [];
@@ -190,7 +201,7 @@ export default {
           let mapDataItem = this.mapGridData[key];
           let seriesItem = {
             name: key,
-            type: 'bar',
+            type: chartType,
             data: [],
           };
           for (let i = 0; i < xAxisData.length; i++) {
@@ -204,6 +215,55 @@ export default {
       this.options.xAxis[0].data = xAxisData;
       this.options.series = seriesData;
       this.options = JSON.parse(JSON.stringify(this.options));
+    },
+    downLoad() {
+      let {columnOneName, columnTwoName, columnTwoStoreArray} = this;
+      let head = [[columnOneName, columnOneName]];
+      let headPropName = [this.columnOneStatic];
+      let gridData = this.gridData;
+      let data = [];
+      for (let i = 0; i < columnTwoStoreArray.length; i++) {
+        const element = columnTwoStoreArray[i];
+        let headItem = [columnTwoName, element.name];
+        head.push(headItem);
+        headPropName.push(element.value);
+      }
+      for (let i = 0; i < gridData.length; i++) {
+        const gridDataItem = gridData[i];
+        let exporGridDataItem = [];
+        data.push(exporGridDataItem);
+        for (let j = 0; j < headPropName.length; j++) {
+          const headName = headPropName[j];
+          exporGridDataItem.push(gridDataItem[headName]);
+        }
+      }
+      let baseImage = this.$refs.chart.getDataURL();
+      baseImage = baseImage.slice(baseImage.indexOf(',') + 1);
+      let option = {
+        url: downLoadUrl,
+        data: {
+          head,
+          data,
+          baseImage,
+          fileName: '线状图报表',
+        },
+      };
+      restUtil.downLoad(option).then((res) => {
+        console.log('response: ', res);
+        // new Blob([data])用来创建URL的file对象或者blob对象
+        let url = window.URL.createObjectURL(new Blob([res.data]));
+        // 生成一个a标签
+        let link = document.createElement('a');
+        link.style.display = 'none';
+        link.href = url;
+        // 生成时间戳
+        let timestamp = new Date().getTime();
+        link.download = timestamp + '.xlsx';
+        document.body.appendChild(link);
+        link.click();
+        URL.revokeObjectURL(link.href); //释放url
+        document.body.removeChild(link); //释放标签
+      });
     },
   },
 };
