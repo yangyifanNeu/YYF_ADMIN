@@ -14,7 +14,7 @@
     </el-row>
     <el-row>
       <el-col :span="24">
-        <el-table :data="gridData" ref="grid">
+        <el-table :data="currentPageData" ref="grid">
           <el-table-column :label="columnOneName" :prop="columnOneStatic" min-width="20%"> </el-table-column>
           <el-table-column :label="columnTwoName">
             <template v-for="item in columnTwoStoreArray">
@@ -23,6 +23,13 @@
             </template>
           </el-table-column>
         </el-table>
+        <el-pagination
+          @current-change="handleCurrentChange"
+          :current-page.sync="pageNo"
+          :page-size="pageSize"
+          layout="prev, pager, next, jumper, ->, total"
+          :total="total"
+        />
       </el-col>
     </el-row>
     <el-row>
@@ -77,6 +84,10 @@ export default {
       columnOneName: '区域',
       columnTwoName: '品牌',
       columnWidth: '40%',
+      pageNo: 1,
+      pageSize: 10,
+      total: 0,
+      currentPageData: [],
       searchTypeStore: [
         {
           value: 'REGION',
@@ -156,6 +167,9 @@ export default {
         window.console.log(mapData);
         $this.mapGridData = mapData;
         $this.gridData = mapToArray(mapData);
+        $this.total = this.gridData.length;
+        $this.pageNo = 1;
+        $this.handleCurrentChange(1);
         $this.buildChartOptions();
       });
     },
@@ -172,6 +186,12 @@ export default {
           type: 'warning',
         });
       }
+    },
+    handleCurrentChange(pageIndex) {
+      this.pageNo = pageIndex;
+      let start = (pageIndex - 1) * this.pageSize;
+      let end = start + this.pageSize;
+      this.currentPageData = this.gridData.slice(start, end);
     },
     getStoreName(value) {
       var array = this.searchTypeStore;

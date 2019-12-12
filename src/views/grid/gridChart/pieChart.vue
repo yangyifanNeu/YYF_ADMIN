@@ -5,12 +5,19 @@
         <el-option v-for="item in searchTypeStore" :key="item.value" :label="item.name" :value="item.value">
         </el-option>
       </el-select>
-      <el-table :data="gridData" style="width: 100%">
+      <el-table :data="currentPageData" style="width: 100%">
         <template v-for="item in gridStructure">
           <el-table-column :label="item.label" :width="item.width || 150" :key="item.name" :prop="item.name">
           </el-table-column>
         </template>
       </el-table>
+      <el-pagination
+        @current-change="handleCurrentChange"
+        :current-page.sync="pageNo"
+        :page-size="pageSize"
+        layout="prev, pager, next, jumper, ->, total"
+        :total="total"
+      />
     </el-aside>
     <el-main height="">
       <v-chart :options="pieOptions" ref="chart" style="width:100%" />
@@ -21,6 +28,8 @@
 <script>
 import restUtil from '../../../util/restUtil.js';
 const restUrl = '/report/pie';
+const downLoadUrl = '/report/download';
+// const pageSize = 10;
 export default {
   props: {
     searchCondition: {
@@ -33,6 +42,10 @@ export default {
   data: () => {
     return {
       gridData: [],
+      pageNo: 1,
+      pageSize: 10,
+      total: 0,
+      currentPageData: [],
       searchType: 'REGION',
       searchTypeStore: [
         {
@@ -71,13 +84,11 @@ export default {
       let $this = this;
       return {
         title: {
-          text: '某站点用户访问来源',
-          subtext: '纯属虚构',
           x: 'center',
         },
         tooltip: {
           trigger: 'item',
-          formatter: '{a} <br/>{b} : {c} ({d}%)',
+          formatter: '{b} : {c} ({d}%)',
         },
         legend: {
           orient: 'vertical',
@@ -85,7 +96,6 @@ export default {
         },
         series: [
           {
-            name: '访问来源',
             type: 'pie',
             radius: '55%',
             center: ['50%', '60%'],
@@ -126,10 +136,62 @@ export default {
             [searchType]: item.columnOne,
           };
         });
+        this.total = this.gridData.length;
+        this.pageNo = 1;
+        this.handleCurrentChange(1);
       });
+    },
+    handleCurrentChange(pageIndex) {
+      this.pageNo = pageIndex;
+      let start = (pageIndex - 1) * this.pageSize;
+      let end = start + this.pageSize;
+      this.currentPageData = this.gridData.slice(start, end);
     },
     downLoad() {
       window.console.log('下载表格和饼图');
+      let gridStructure = this.gridStructure;
+      let gridData = this.gridData;
+      let header = [];
+      let data = [];
+      let headPropName = [];
+      gridStructure.forEach((item) => {
+        header.push([item.label]);
+        headPropName.push(item.name);
+      });
+      gridData.forEach((item) => {
+        let dataItem = [];
+        headPropName.forEach((headerItem) => {
+          dataItem.push(item[headerItem]);
+        });
+        data.push(dataItem);
+      });
+      let baseImage = this.$refs.chart.getDataURL();
+      baseImage = baseImage.slice(baseImage.indexOf(',') + 1);
+      let option = {
+        url: downLoadUrl,
+        data: {
+          head: header,
+          data,
+          baseImage,
+          fileName: '饼图报表',
+        },
+      };
+      restUtil.downLoad(option).then((res) => {
+        console.log('response: ', res);
+        // new Blob([data])用来创建URL的file对象或者blob对象
+        let url = window.URL.createObjectURL(new Blob([res.data]));
+        // 生成一个a标签
+        let link = document.createElement('a');
+        link.style.display = 'none';
+        link.href = url;
+        // 生成时间戳
+        let timestamp = new Date().getTime();
+        link.download = timestamp + '.xlsx';
+        document.body.appendChild(link);
+        link.click();
+        URL.revokeObjectURL(link.href); //释放url
+        document.body.removeChild(link); //释放标签
+      });
     },
   },
 };
