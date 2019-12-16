@@ -105,7 +105,14 @@
 import {createNamespacedHelpers} from 'vuex';
 const {mapGetters} = createNamespacedHelpers('bmw/unReport');
 export default {
-  props: ['formData'],
+  props: {
+    formData: {
+      type: Object,
+      default: function() {
+        return {};
+      },
+    },
+  },
   computed: {
     ...mapGetters(['dealerInfoStructure', 'carInfoStructure']),
   },

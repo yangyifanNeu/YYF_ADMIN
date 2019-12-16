@@ -279,34 +279,17 @@ export default {
           baseImage,
           fileName: '线状图报表',
         },
+        fileName: this.type == 'line' ? '线状图报表.xlsx' : '柱状图报表.xlsx',
       };
-      restUtil
-        .downLoad(option)
-        .then((res) => {
-          console.log('response: ', res);
-          // new Blob([data])用来创建URL的file对象或者blob对象
-          let url = window.URL.createObjectURL(new Blob([res.data]));
-          // 生成一个a标签
-          let link = document.createElement('a');
-          link.style.display = 'none';
-          link.href = url;
-          // 生成时间戳
-          let timestamp = new Date().getTime();
-          link.download = timestamp + '.xlsx';
-          document.body.appendChild(link);
-          link.click();
-          URL.revokeObjectURL(link.href); //释放url
-          document.body.removeChild(link); //释放标签
-        })
-        .catch((exception) => {
-          console.error(exception);
-          $this.gridInfo.loading = false;
-          $this.$notify({
-            title: '错误',
-            message: '下载失败',
-            type: 'error',
-          });
+      restUtil.downLoad(option).catch((exception) => {
+        console.error(exception);
+        $this.gridInfo.loading = false;
+        $this.$notify({
+          title: '错误',
+          message: '下载失败',
+          type: 'error',
         });
+      });
     },
   },
 };

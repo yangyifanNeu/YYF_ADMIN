@@ -75,7 +75,7 @@
             </el-date-picker>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" @click="onSubmit">查询</el-button>
+            <el-button type="primary" @click="search">查询</el-button>
             <el-button>取消</el-button>
           </el-form-item>
         </el-form>
@@ -103,14 +103,7 @@
             </template>
           </el-table-column>
           <template v-for="item in ucReportStructure">
-            <el-table-column
-              :label="item.label"
-              :width="item.width || 300"
-              :key="item.name"
-              :prop="item.name"
-              :formatter="dataFormatter"
-            >
-            </el-table-column>
+            <el-table-column :label="$t(item)" :min-width="200" :key="item" :prop="item"> </el-table-column>
           </template>
         </el-table>
 
@@ -278,8 +271,12 @@ export default {
       }
       return cellValue;
     },
-    onSubmit(event) {
-      window.console.log(event);
+    search() {
+      const pageInfo = {
+        pageNo: 1,
+        pageSize: pageSize,
+      };
+      this.getGridDataByPage(pageInfo);
     },
     pieChart() {
       this.peiDialogVisible = true;
@@ -301,9 +298,10 @@ export default {
     },
     exportGrid() {
       window.console.log('导出表格');
+      var $this = this;
       restUtil
         .downLoad({
-          url: '/test',
+          url: '/report/test',
           data: {
             searchBean: {
               language: 8,
@@ -312,22 +310,16 @@ export default {
             dataName: 'test',
             fileName: 'test',
           },
+          fileName: '导出全部.xlsx',
         })
-        .then((res) => {
-          console.log('response: ', res);
-          // new Blob([data])用来创建URL的file对象或者blob对象
-          let url = window.URL.createObjectURL(new Blob([res.data]));
-          // 生成一个a标签
-          let link = document.createElement('a');
-          link.style.display = 'none';
-          link.href = url;
-          // 生成时间戳
-          let timestamp = new Date().getTime();
-          link.download = timestamp + '.xlsx';
-          document.body.appendChild(link);
-          link.click();
-          URL.revokeObjectURL(link.href); //释放url
-          document.body.removeChild(link); //释放标签
+        .catch((exception) => {
+          console.error(exception);
+          $this.gridInfo.loading = false;
+          $this.$notify({
+            title: '错误',
+            message: '下载失败',
+            type: 'error',
+          });
         });
     },
     getGridDataByPage(pageInfo) {
