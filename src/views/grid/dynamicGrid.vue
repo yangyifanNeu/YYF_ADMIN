@@ -91,7 +91,12 @@
           </span>
         </div>
         <!-- card body -->
-        <el-table :data="gridInfo.result" style="width: 100%" v-loading.fullscreen.lock="gridInfo.loading">
+        <el-table
+          :data="gridInfo.result"
+          style="width: 100%"
+          v-loading.fullscreen.lock="gridInfo.loading"
+          @row-click="rowClick"
+        >
           <el-table-column label="查看" width="80">
             <template slot-scope="scope">
               <i class="el-icon-search" @click="showDetail(scope.row, scope.$index)"></i>
@@ -164,6 +169,14 @@
           >
         </span>
       </el-dialog>
+      <el-dialog
+        title="车辆信息"
+        :visible.sync="gridDetailDialogVisible"
+        width="90%"
+        :before-close="handleCloseDetailDialog"
+      >
+        <gridDetailComponent :form-data="currentRowData" />
+      </el-dialog>
     </el-main>
   </el-container>
 </template>
@@ -173,6 +186,8 @@ import axios from 'axios';
 import {createNamespacedHelpers} from 'vuex';
 import pieChartComponent from './gridChart/pieChart';
 import lineOrBarChartComponent from './gridChart/lineOrBarChart';
+import gridDetailComponent from './gridDetail/gridDetail';
+import restUtil from '../../util/restUtil.js';
 const API_PREFIX_URL = 'http://10.4.50.59:8999';
 const GRID_DATA_URL = '/report/list';
 const pageSize = 10;
@@ -181,6 +196,7 @@ export default {
   components: {
     pieChartComponent,
     lineOrBarChartComponent,
+    gridDetailComponent,
   },
   data: () => {
     return {
@@ -190,6 +206,7 @@ export default {
       peiDialogVisible: false,
       lineDialogVisible: false,
       barDialogVisible: false,
+      gridDetailDialogVisible: false,
       form: {
         name: '',
         region: '',
@@ -239,6 +256,7 @@ export default {
         result: [],
         loading: false,
       },
+      currentRowData: {},
     };
   },
   mounted() {},
@@ -283,21 +301,64 @@ export default {
     },
     exportGrid() {
       window.console.log('导出表格');
+      restUtil
+        .downLoad({
+          url: '/test',
+          data: {
+            searchBean: {
+              language: 8,
+            },
+            total: 100,
+            dataName: 'test',
+            fileName: 'test',
+          },
+        })
+        .then((res) => {
+          console.log('response: ', res);
+          // new Blob([data])用来创建URL的file对象或者blob对象
+          let url = window.URL.createObjectURL(new Blob([res.data]));
+          // 生成一个a标签
+          let link = document.createElement('a');
+          link.style.display = 'none';
+          link.href = url;
+          // 生成时间戳
+          let timestamp = new Date().getTime();
+          link.download = timestamp + '.xlsx';
+          document.body.appendChild(link);
+          link.click();
+          URL.revokeObjectURL(link.href); //释放url
+          document.body.removeChild(link); //释放标签
+        });
     },
     getGridDataByPage(pageInfo) {
       var $this = this;
       $this.gridInfo.loading = true;
       const resetUrl = API_PREFIX_URL + GRID_DATA_URL + `?pageSize=${pageInfo.pageSize}&pageNo=${pageInfo.pageNo}`;
-      axios.get(resetUrl).then((res) => {
-        $this.gridInfo.loading = false;
-        if (res.data.code == '200') {
-          this.gridInfo = Object.assign(this.gridInfo, res.data.data);
-        }
-        $this.$forceUpdate();
-      });
+      axios
+        .get(resetUrl)
+        .then((res) => {
+          $this.gridInfo.loading = false;
+          if (res.data.code == '200') {
+            this.gridInfo = Object.assign(this.gridInfo, res.data.data);
+          }
+          $this.$forceUpdate();
+        })
+        .catch((exception) => {
+          console.error(exception);
+          $this.gridInfo.loading = false;
+          $this.$notify({
+            title: '错误',
+            message: '获取数据失败',
+            type: 'error',
+          });
+        });
     },
     showDetail() {
+      this.gridDetailDialogVisible = true;
       window.console.log(...arguments);
+    },
+    handleCloseDetailDialog() {
+      this.gridDetailDialogVisible = false;
     },
     handleCloseDialog() {
       this.peiDialogVisible = false;
@@ -317,6 +378,9 @@ export default {
         this.$refs.barChart.downLoad();
         return;
       }
+    },
+    rowClick(row) {
+      this.currentRowData = row;
     },
   },
 };

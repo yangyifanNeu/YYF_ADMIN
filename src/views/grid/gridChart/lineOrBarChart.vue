@@ -138,40 +138,51 @@ export default {
       let columnTwo = this.columnTwo;
       let url = restUrl + `?columnNameOne=${columnOne}&columnNameTwo=${columnTwo}`;
       var $this = this;
-      restUtil.get({url}).then((res) => {
-        let data = res.data;
-        let mapData = {};
-        let dataTemplate = {};
-        let {columnTwoStoreArray, columnTwoStoreMap} = getColumnTwoStoreFromArray(data);
-        console.log(columnTwoStoreMap);
-        for (const key in columnTwoStoreMap) {
-          if (columnTwoStoreMap.hasOwnProperty(key)) {
-            dataTemplate[key] = 0;
+      restUtil
+        .get({url})
+        .then((res) => {
+          let data = res.data;
+          let mapData = {};
+          let dataTemplate = {};
+          let {columnTwoStoreArray, columnTwoStoreMap} = getColumnTwoStoreFromArray(data);
+          console.log(columnTwoStoreMap);
+          for (const key in columnTwoStoreMap) {
+            if (columnTwoStoreMap.hasOwnProperty(key)) {
+              dataTemplate[key] = 0;
+            }
           }
-        }
-        $this.columnTwoStoreArray = columnTwoStoreArray;
-        if (columnTwoStoreArray.length > 0) {
-          $this.columnWidth = 80 / columnTwoStoreArray.length + '%';
-        }
-        data.forEach(function(item) {
-          let columnNameOne = item.columnOne;
-          let columnNameTwo = item.columnTwo;
+          $this.columnTwoStoreArray = columnTwoStoreArray;
+          if (columnTwoStoreArray.length > 0) {
+            $this.columnWidth = 80 / columnTwoStoreArray.length + '%';
+          }
+          data.forEach(function(item) {
+            let columnNameOne = item.columnOne;
+            let columnNameTwo = item.columnTwo;
 
-          if (!mapData[columnNameOne]) {
-            mapData[columnNameOne] = Object.assign({}, dataTemplate, {
-              [columnOne]: columnNameOne,
-            });
-          }
-          mapData[columnNameOne][columnNameTwo] = item.total;
+            if (!mapData[columnNameOne]) {
+              mapData[columnNameOne] = Object.assign({}, dataTemplate, {
+                [columnOne]: columnNameOne,
+              });
+            }
+            mapData[columnNameOne][columnNameTwo] = item.total;
+          });
+          window.console.log(mapData);
+          $this.mapGridData = mapData;
+          $this.gridData = mapToArray(mapData);
+          $this.total = this.gridData.length;
+          $this.pageNo = 1;
+          $this.handleCurrentChange(1);
+          $this.buildChartOptions();
+        })
+        .catch((exception) => {
+          console.error(exception);
+          $this.gridInfo.loading = false;
+          $this.$notify({
+            title: '错误',
+            message: '获取数据失败',
+            type: 'error',
+          });
         });
-        window.console.log(mapData);
-        $this.mapGridData = mapData;
-        $this.gridData = mapToArray(mapData);
-        $this.total = this.gridData.length;
-        $this.pageNo = 1;
-        $this.handleCurrentChange(1);
-        $this.buildChartOptions();
-      });
     },
     selectChange() {
       if (this.columnOne !== this.columnTwo) {
@@ -242,6 +253,7 @@ export default {
       let headPropName = [this.columnOneStatic];
       let gridData = this.gridData;
       let data = [];
+      let $this = this;
       for (let i = 0; i < columnTwoStoreArray.length; i++) {
         const element = columnTwoStoreArray[i];
         let headItem = [columnTwoName, element.name];
@@ -268,22 +280,33 @@ export default {
           fileName: '线状图报表',
         },
       };
-      restUtil.downLoad(option).then((res) => {
-        console.log('response: ', res);
-        // new Blob([data])用来创建URL的file对象或者blob对象
-        let url = window.URL.createObjectURL(new Blob([res.data]));
-        // 生成一个a标签
-        let link = document.createElement('a');
-        link.style.display = 'none';
-        link.href = url;
-        // 生成时间戳
-        let timestamp = new Date().getTime();
-        link.download = timestamp + '.xlsx';
-        document.body.appendChild(link);
-        link.click();
-        URL.revokeObjectURL(link.href); //释放url
-        document.body.removeChild(link); //释放标签
-      });
+      restUtil
+        .downLoad(option)
+        .then((res) => {
+          console.log('response: ', res);
+          // new Blob([data])用来创建URL的file对象或者blob对象
+          let url = window.URL.createObjectURL(new Blob([res.data]));
+          // 生成一个a标签
+          let link = document.createElement('a');
+          link.style.display = 'none';
+          link.href = url;
+          // 生成时间戳
+          let timestamp = new Date().getTime();
+          link.download = timestamp + '.xlsx';
+          document.body.appendChild(link);
+          link.click();
+          URL.revokeObjectURL(link.href); //释放url
+          document.body.removeChild(link); //释放标签
+        })
+        .catch((exception) => {
+          console.error(exception);
+          $this.gridInfo.loading = false;
+          $this.$notify({
+            title: '错误',
+            message: '下载失败',
+            type: 'error',
+          });
+        });
     },
   },
 };

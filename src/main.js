@@ -11,7 +11,7 @@ import 'element-ui/lib/theme-chalk/index.css';
 import ECharts from 'vue-echarts';
 // eslint-disable-next-line no-unused-vars
 import * as echarts from 'echarts';
-
+import i18n from './i18n/index.js';
 Vue.use(Antd);
 Vue.use(ElementUI);
 Vue.config.productionTip = false;
@@ -21,5 +21,6 @@ Vue.component('v-chart', ECharts);
 new Vue({
   router,
   store,
+  i18n,
   render: (h) => h(App),
 }).$mount('#app');

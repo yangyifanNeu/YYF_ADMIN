@@ -67,12 +67,82 @@ export default {
         label: '车辆类型',
       },
     ],
+    dealerInfoStructure: [
+      {
+        name: 'cbuNo',
+        label: 'cbu编号',
+      },
+      {
+        name: 'ckdNo',
+        label: 'CKD编号',
+      },
+      {
+        name: 'dealerName',
+        label: '经销商名称',
+      },
+      {
+        name: 'region',
+        label: '区域',
+      },
+    ],
+    carInfoStructure: [
+      {
+        name: 'vehicleStatus',
+        label: '车辆状态',
+      },
+      {
+        name: 'vin',
+        label: '车架号',
+      },
+      {
+        name: 'saleType',
+        label: '销售类型',
+      },
+      {
+        name: 'source',
+        label: '车辆来源',
+      },
+      {
+        name: 'ucCarSeries',
+        label: '车系',
+      },
+      {
+        name: 'mode',
+        label: '车型',
+      },
+      {
+        name: 'ecode',
+        label: 'E-Code',
+      },
+      {
+        name: 'nscOrBba',
+        label: '进口、出口',
+      },
+      {
+        name: 'bodyColor',
+        label: '车身颜色',
+      },
+      {
+        name: 'interiorColor',
+        label: '内饰颜色',
+      },
+      {
+        name: 'carType',
+        label: '车辆类型',
+      },
+    ],
   },
   mutations: {},
   actions: {},
   getters: {
     ucReportStructure: (state) => {
       return state.ucReportStructure;
+    },
+    dealerInfoStructure: (state) => {
+      return state.dealerInfoStructure;
+    },
+    carInfoStructure: (state) => {
+      return state.carInfoStructure;
     },
   },
 };
