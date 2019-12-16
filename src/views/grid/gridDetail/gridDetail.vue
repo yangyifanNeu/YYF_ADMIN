@@ -9,9 +9,9 @@
                 <span>经销商信息</span>
               </div>
               <el-form ref="dealerInfoForm" label-width="80px" label-position="top" size="mini" class="search-form">
-                <el-row>
+                <el-row :gutter="20">
                   <div v-for="item in dealerInfoStructure" :key="item.name">
-                    <el-col :span="6">
+                    <el-col :span="5">
                       <el-form-item :label="item.label">
                         <el-input :value="formData[item.name]" size="small" disabled></el-input>
                       </el-form-item>
@@ -29,7 +29,7 @@
                 <span>车辆信息</span>
               </div>
               <el-form ref="carInfoForm" label-width="80px" label-position="top" size="mini" class="search-form">
-                <el-row>
+                <el-row :gutter="20">
                   <div v-for="item in carInfoStructure" :key="item.name">
                     <el-col :span="6">
                       <el-form-item :label="item.label">
