@@ -1,19 +1,20 @@
-const glob = require('glob');
+// const glob = require('glob');
 let pages = {
   index: {
     entry: 'src/main.js',
     template: 'public/index.html',
   },
 };
-glob.sync('./src/views/**/*App.js').forEach((path) => {
-  let chunk = path.split('./src/views/')[1].split('.js')[0];
-  chunk = chunk.replace('App', '');
-  pages[chunk] = {
-    entry: path,
-    template: 'public/index.html',
-    chunks: ['chunk-vendors', 'chunk-common', chunk],
-  };
-});
+//注释掉多页打包，方便调试时刷新，需要时打开注释即可
+// glob.sync('./src/views/**/*App.js').forEach((path) => {
+//   let chunk = path.split('./src/views/')[1].split('.js')[0];
+//   chunk = chunk.replace('App', '');
+//   pages[chunk] = {
+//     entry: path,
+//     template: 'public/index.html',
+//     chunks: ['chunk-vendors', 'chunk-common', chunk],
+//   };
+// });
 module.exports = {
   css: {
     loaderOptions: {
