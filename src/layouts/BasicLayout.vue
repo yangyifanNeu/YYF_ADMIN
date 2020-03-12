@@ -16,6 +16,7 @@
         :trigger="null"
         :class="'ant-layout-sider-' + ($route.query.theme || 'dark')"
         v-if="$route.query.mode == 'inline' || !$route.query.mode"
+        width="256"
       >
         <div class="logo">
           <div v-if="!collapsed">YYF ADMIN</div>
