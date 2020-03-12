@@ -1,27 +1,6 @@
 <template>
   <div>
-    <h1>Element Ui Grid</h1>
-    <el-table :data="eleTableData" style="width: 100%" size="small" border="true">
-      <template v-for="item in eleTableStructure">
-        <el-table-column
-          :label="item.label"
-          :width="item.width"
-          :key="item.name"
-          :prop="item.name"
-          :formatter="dataFormatter"
-          v-if="item.type == 'date'"
-        />
-        <el-table-column
-          :label="item.label"
-          :width="item.width"
-          :key="item.name"
-          :prop="item.name"
-          :formatter="commonFormatter"
-          v-if="item.type !== 'date'"
-        />
-      </template>
-    </el-table>
-    <h1>Ant Design Grid</h1>
+    <h2>代码从表格页面，有冗余代码，开发者可自行精简，改样例主要演示导出功能</h2>
     <a-table :columns="antGridStructure" :data-source="tableData" size="small">
       <template slot="startDate" slot-scope="startDate">
         {{ dataFormatter(startDate) }}
@@ -33,6 +12,7 @@
         {{ commonFormatter(sex, record, 'sex', true) }}
       </template>
     </a-table>
+    <a-button type="primary" icon="cloud-download" @click="exportGrid" class="export-btn" />
   </div>
 </template>
 
@@ -41,6 +21,7 @@ import axios from 'axios';
 const API_PREFIX_URL = 'http://127.0.0.1:3000';
 const GRID_DATA_URL = '/getGridData';
 const GRID_STRUCTURE_URL = '/getGridStructure';
+var Excel = require('exceljs');
 import moment from 'moment';
 export default {
   data: () => {
@@ -71,15 +52,9 @@ export default {
       return this.tableStructure.map((item) => {
         let newItem = Object.assign({}, item, {dataIndex: item.name, title: item.label, key: item.name});
         if (newItem.type == 'date') {
-          // newItem.customRender = (text) => {
-          //   return moment(text).format('YYYY-MM-DD');
-          // };
           newItem.scopedSlots = {customRender: newItem.name};
         }
         if (newItem.store && newItem.store.length > 0) {
-          // newItem.customRender = (text) => {
-          //   return newItem.filter((item) => item.codevalue == text)[0]['codename'];
-          // };
           newItem.scopedSlots = {customRender: newItem.name};
         }
         return newItem;
@@ -112,8 +87,75 @@ export default {
         return rowItem[propertyName];
       }
     },
+    exportGrid() {
+      let head = this.tableStructure;
+      let $this = this;
+      let fileName = '表格导出';
+      var wb = new Excel.Workbook();
+      var ws = wb.addWorksheet('table');
+      ws.columns = head.map((item) => Object.assign({}, {header: item.label, key: item.name, width: 20}));
+      let cloneTableData = this.tableData.map((item) => Object.assign({}, item));
+      ws.addRows(
+        cloneTableData.map((item) => {
+          for (const key in item) {
+            if (item.hasOwnProperty(key)) {
+              const element = item[key];
+              let type = null;
+              let store = null;
+              for (let index = 0; index < $this.tableStructure.length; index++) {
+                const element_1 = $this.tableStructure[index];
+                if (element_1.name == key) {
+                  type = element_1.type;
+                  store = element_1.store;
+                  if (type == 'date') {
+                    item[key] = moment(element).format('YYYY-MM-DD');
+                  }
+                  if (store) {
+                    for (let i = 0; i < store.length; i++) {
+                      const storeItem = store[i];
+                      if (storeItem['codevalue'] == element) {
+                        item[key] = storeItem['codename'];
+                        break;
+                      }
+                    }
+                  }
+                  break;
+                }
+              }
+            }
+          }
+          return item;
+        }),
+      );
+      wb.xlsx
+        .writeBuffer({
+          base64: true,
+        })
+        .then(function(xls64) {
+          // build anchor tag and attach file (works in chrome)
+          var a = document.createElement('a');
+          var data = new Blob([xls64], {
+            type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+          });
+
+          var url = URL.createObjectURL(data);
+          a.href = url;
+          a.download = `${fileName}.xlsx`;
+          document.body.appendChild(a);
+          a.click();
+          setTimeout(function() {
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+          }, 0);
+        });
+    },
   },
 };
 </script>
 
-<style></style>
+<style scoped>
+.export-btn {
+  position: absolute;
+  margin-top: -43px;
+}
+</style>
