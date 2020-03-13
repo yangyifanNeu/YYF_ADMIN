@@ -38,6 +38,7 @@ export default {
     };
   },
   mounted() {},
+  beforeMount() {},
   created() {
     axios
       .get(API_PREFIX_URL + GRID_STRUCTURE_URL)
