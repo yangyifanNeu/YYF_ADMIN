@@ -12,7 +12,12 @@
         {{ commonFormatter(sex, record, 'sex', true) }}
       </template>
     </a-table>
-    <a-button type="primary" icon="cloud-download" @click="exportGrid" class="export-btn" />
+    <a-tooltip placement="top">
+      <template slot="title">
+        <span>导出表格</span>
+      </template>
+      <a-button type="primary" icon="cloud-download" @click="exportGrid" class="export-btn" />
+    </a-tooltip>
   </div>
 </template>
 
