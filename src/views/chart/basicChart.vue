@@ -128,4 +128,9 @@ export default {
 };
 </script>
 
-<style></style>
+<style>
+.echarts {
+  width: 100%;
+  height: 400px;
+}
+</style>
